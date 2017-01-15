@@ -84,14 +84,13 @@
         </table>
         <p>Last updated: users.Raw.LastUpdated | formatTimestamp  </p>
         </div>
-        <div class="row" v-if="debug">
-              <div class="col-sm-12">
+        <button class="pure-button" v-on:click="toggleDebug">Debug Info</button>
+        <div class="debug" v-if="debug">
                 <h3>
                   Debug Data
                 </h3>
                 <pre>{{ $data }}</pre>
-              </div>
-        </div> <!-- /row -->
+        </div>
     </div>
 </div>
 <!--

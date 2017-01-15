@@ -9,7 +9,7 @@ window.onload = function () {
     var uthgardPlayers = new Vue({
         el: '#uthgard-players',
         data: {
-            debug: true,
+            debug: false,
             fakeapi: true,
             apiURL: 'api.php?names=',
             defaultNames: 'Mistar,Bruno,Ascerian,Felrith',
@@ -26,6 +26,9 @@ window.onload = function () {
             }
         },
         methods: {
+            toggleDebug: function () {
+                this.debug = !this.debug
+            },
             fetchAllNames: function () {
                 if ( this.namesInputSanitized == '' ) {
                     this.namesInput = this.defaultNames
