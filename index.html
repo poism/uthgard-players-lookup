@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Uthgard DAOC Player Info</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.2/pure-min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.min.js"></script>
+    <script src="app.js"></script>
+    <style>
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity .5s
+        }
+        .fade-enter, .fade-leave-active {
+            opacity: 0
+        }
+        #uthgard-players {
+            max-width: 500px;
+            margin:0 auto;
+        }
+        #uthgard-players table {
+            min-width: 100%;
+        }
+        #uthgard-players .form {
+            padding-bottom:30px;
+        }
+        #uthgard-players .results {
+            padding-bottom:30px;
+        }
+        td.xp-level {
+            text-align:center;
+        }
+        .xp-level .xp-max {
+            border:1px green solid;
+        }
+        .xp-level .xp-max .xp-progress {
+            position:relative;
+            background-color:greenyellow;
+            height:5px;
+            border-right: 1px solid green;
+        }
+        .realmrank.xp-level .xp-max {
+            border:1px red solid;
+        }
+        .realmrank.xp-level .xp-max .xp-progress {
+            background-color:orange;
+            border-right: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+<div id="main">
+    <div id="uthgard-players" class="pure-form">
+        <h1>Uthgard Players</h1>
+        <h3  v-if="fakeapi">Note: Temporarily operating in fakeapi mode (not pulling data from uthgard api).</h3>
+        <div class="form">
+            <input type="text" v-model="namesInput" v-on:keyup.enter="fetchData" placeholder="Mistar,Bruno,Ascerian,Felrith" />
+           <button class="pure-button" v-on:click="fetchAllNames">Lookup Players</button>
+        </div>
+        <div class="results">
+        <table class="pure-table pure-table-horizontal">
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Race</th>
+                    <th>Class</th>
+                    <th>Level</th>
+                    <th>Realm Rank</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr v-for="user in usersByExperience">
+                <td>{{user.FullName}}</td>
+                <td>{{user.RaceName}}</td>
+                <td>{{user.ClassName}}</td>
+                <td class="xp-level">{{user.Level}}<div class="xp-max">
+                    <div class="xp-progress" v-bind:style="{ width: Math.floor( user.XP_Percent * 100) + '%' }"></div></div>
+                </td>
+                <td class="realmrank xp-level">{{user.RealmRank}}<div class="xp-max">
+                    <div class="xp-progress" v-bind:style="{ width: Math.floor( user.RP_Percent * 100) + '%' }"></div></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p>Last updated: users.Raw.LastUpdated | formatTimestamp  </p>
+        </div>
+        <div class="row" v-if="debug">
+              <div class="col-sm-12">
+                <h3>
+                  Debug Data
+                </h3>
+                <pre>{{ $data }}</pre>
+              </div>
+        </div> <!-- /row -->
+    </div>
+</div>
+<!--
+Well, what is the nature of the flat databases. Are they large or small. Is it simple arrays with arrays in them? if its something simple say userprofiles built as such:
+
+$user = array("name" => "dubayou", 
+              "age" => 20,
+              "websites" => array("dubayou.com","willwharton.com","codecream.com"),
+              "and_one" => "more");
+and to save or update the db record for that user.
+
+$dir = "../userdata/";  //make sure to put it bellow what the server can reach.
+file_put_contents($dir.$user['name'],serialize($user));
+and to load the record for the user
+
+function &get_user($name){
+    return unserialize(file_get_contents("../userdata/".$name));
+}
+but again this implementation will vary on the application and nature of the database you need.
+-->
+    
+</body>
+</html>
