@@ -48,7 +48,7 @@
         <h1>Uthgard Players</h1>
         
         <div class="form">
-            <input type="text" v-model="namesInput" v-on:keyup.enter="fetchData" placeholder="Mistar,Bruno,Ascerian,Felrith" />
+            <input type="text" v-model="namesInput" v-on:keyup.enter="fetchAllNames" placeholder="Mistar,Bruno,Ascerian,Felrith" />
            <button class="pure-button" v-on:click="fetchAllNames">Lookup Players</button>
         </div>
         
