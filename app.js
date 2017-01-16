@@ -1,8 +1,6 @@
 /* Uthgard Players Lookup Tool
  * By Sherab Sangpo Dorje ( po@poism.com )
- * Note: although my api.php file supports comma separated names (?names=) via: api.php?names=name1,name2,name3
- * Instead to mimic uthgard api behavior, we will only fetch single names (api.php?name=) 
- * - this way once they allow cross-domain requests this api.php will not be necessary.
+ * 
 */
 
 window.onload = function () {
@@ -16,6 +14,8 @@ window.onload = function () {
             namesInput: '',
             namesInputSanitized: '',
             namesInputArray: [],
+            inProgress: false,
+            hasResults: false,
             users: []
         },
         watch: {
@@ -39,9 +39,12 @@ window.onload = function () {
             fetchData: function (name) {
               var xhr = new XMLHttpRequest()
               var self = this
+              self.inProgress = true
               xhr.open('GET', encodeURI(self.apiURL + self.namesInput + (self.fakeapi ? '&fakeapi' : '')) )
               xhr.onload = function () {
                 self.users = JSON.parse(xhr.responseText)
+                self.inProgress = false
+                self.hasResults = true
                 console.log(self.users)
               }
               xhr.send()
@@ -78,7 +81,7 @@ window.onload = function () {
         computed: {
             usersByExperience: function () {
                 var self = this
-                return _.orderBy(self.users, ['Raw.XP', 'RealmRank', 'RP_Percent'],['asc', 'asc', 'asc'])
+                return _.orderBy(self.users, ['Raw.XP', 'RealmRank', 'RP_Percent'],['desc', 'desc', 'desc'])
             }
         }
     });

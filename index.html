@@ -8,12 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.min.js"></script>
     <script src="app.js"></script>
     <style>
-        .fade-enter-active, .fade-leave-active {
-            transition: opacity .5s
-        }
-        .fade-enter, .fade-leave-active {
-            opacity: 0
-        }
         #uthgard-players {
             max-width: 500px;
             margin:0 auto;
@@ -52,12 +46,13 @@
 <div id="main">
     <div id="uthgard-players" class="pure-form">
         <h1>Uthgard Players</h1>
-        <h3  v-if="fakeapi">Note: Temporarily operating in fakeapi mode (not pulling data from uthgard api).</h3>
+        
         <div class="form">
             <input type="text" v-model="namesInput" v-on:keyup.enter="fetchData" placeholder="Mistar,Bruno,Ascerian,Felrith" />
            <button class="pure-button" v-on:click="fetchAllNames">Lookup Players</button>
         </div>
-        <div class="results">
+        
+        <div class="results" v-if="hasResults">
         <table class="pure-table pure-table-horizontal">
             <thead>
                 <tr>
@@ -84,6 +79,12 @@
         </table>
         <p>Last updated: users.Raw.LastUpdated | formatTimestamp  </p>
         </div>
+        
+        <div class="status">
+            <p v-if="fakeapi">Note: Operating in fakeapi mode (not pulling data from uthgard api).</p>
+            <p v-if="inProgress">Fetching data, please wait...</p>
+        </div>
+        
         <button class="pure-button" v-on:click="toggleDebug">Debug Info</button>
         <div class="debug" v-if="debug">
                 <h3>
@@ -93,24 +94,6 @@
         </div>
     </div>
 </div>
-<!--
-Well, what is the nature of the flat databases. Are they large or small. Is it simple arrays with arrays in them? if its something simple say userprofiles built as such:
 
-$user = array("name" => "dubayou", 
-              "age" => 20,
-              "websites" => array("dubayou.com","willwharton.com","codecream.com"),
-              "and_one" => "more");
-and to save or update the db record for that user.
-
-$dir = "../userdata/";  //make sure to put it bellow what the server can reach.
-file_put_contents($dir.$user['name'],serialize($user));
-and to load the record for the user
-
-function &get_user($name){
-    return unserialize(file_get_contents("../userdata/".$name));
-}
-but again this implementation will vary on the application and nature of the database you need.
--->
-    
 </body>
 </html>
