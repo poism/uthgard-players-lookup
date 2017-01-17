@@ -24,6 +24,18 @@ window.onload = function () {
             usersByExperience: function () {
                 var self = this
                 return _.orderBy(self.users, ['Raw.XP', 'RealmRank', 'RP_Percent'],['desc', 'desc', 'desc'])
+            },
+            statusMessage: function() {
+                if ( this.inProgress ) {
+                    status = "Fetching data, please wait..."
+                }
+                else {
+                    status = ""
+                }
+                if ( this.namesNotFound.length > 0 ) {
+                    status += "Not found: " + ( this.namesNotFound.join(', ') )
+                }
+                return status
             }
         },
         filters: {
@@ -62,30 +74,34 @@ window.onload = function () {
                 self.fetchData()
             },
             fetchData: function (name) {
-              var xhr = new XMLHttpRequest()
               var self = this
-              self.inProgress = true
               self.sanitizeInput()
-              console.log('Fetching: ' + self.namesInput)
-              xhr.open('GET', encodeURI(self.apiURL + self.namesInput + (self.fakeapi ? '&fakeapi' : '')) )
-              xhr.onload = function () {
-                self.results = JSON.parse(xhr.responseText)
-                for (var i = 0, len = self.results.length; i < len; i++) {
-                    if ( self.results[i] === null ) {
-                        self.namesNotFound.push( self.namesInputArray[i] )
-                        console.log('Fetching: '+ self.namesInputArray[i] + ' not found')
+              if ( self.namesInputArray.length > 0 ) {
+                var xhr = new XMLHttpRequest()
+                  self.inProgress = true
+
+                  console.log('Fetching: ' + self.namesInput)
+                  xhr.open('GET', encodeURI(self.apiURL + self.namesInput + (self.fakeapi ? '&fakeapi' : '')) )
+                  xhr.onload = function () {
+                    self.results = JSON.parse(xhr.responseText)
+                    for (var i = 0, len = self.results.length; i < len; i++) {
+                        if ( self.results[i] === null ) {
+                            self.namesNotFound.push( self.namesInputArray[i] )
+                            console.log('Fetching: '+ self.namesInputArray[i] + ' not found')
+                        }
+                        else {
+                            self.users.push( self.results[i] )
+                            console.log('Fetching: ' + self.namesInputArray[i] + ' found')
+                        }
                     }
-                    else {
-                        self.users.push( self.results[i] )
-                        console.log('Fetching: ' + self.namesInputArray[i] + ' found')
-                    }
-                }
-                console.log(self.users)
-                console.log('Names not found: ' + self.namesNotFound.join(','))
-                self.inProgress = false
-                self.hasResults = true
+                    console.log(self.users)
+                    console.log('Names not found: ' + self.namesNotFound.join(','))
+                    self.inProgress = false
+                    self.hasResults = true
+                  }
+                xhr.send()
               }
-              xhr.send()
+                self.namesInput = ''
             },
             sanitizeInput: function() {
                     var self = this

@@ -81,8 +81,8 @@
         </div>
         
         <div class="status">
-            <p v-if="fakeapi">Note: Operating in fakeapi mode (not pulling data from uthgard api).</p>
-            <p v-if="inProgress">Fetching data, please wait...</p>
+            <p v-if="fakeapi">Fake API Mode: Data is not being fetched from actual Uthgard API.</p>
+            <p>{{statusMessage}}</p>
         </div>
         
         <button class="pure-button" v-on:click="toggleDebug">Debug Info</button>
