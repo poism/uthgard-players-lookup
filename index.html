@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Uthgard DAOC Player Info</title>
+    <meta charset="UTF-8">
+    <title>DAOC Uthgard Player Info</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.2/pure-min.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
@@ -9,7 +10,7 @@
     <script src="app.js?20170117"></script>
     <style>
         #uthgard-players {
-            max-width: 500px;
+            max-width: 420px;
             margin:0 auto;
         }
         #uthgard-players table {
@@ -31,7 +32,7 @@
         }
         .xp-level .xp-max .xp-progress {
             position:relative;
-            background-color:#cbcbcb;
+            background-color:lightblue;
             height:4px;
             border-bottom:1px solid gray;
             border-right:1px solid gray;
@@ -41,16 +42,27 @@
             background-color:gray;
             height:6px;
         }
+        .status {
+            font-size:0.8em;
+        }
+        .debug {
+            font-size:0.6em;
+        }
+        footer .credit {
+            padding-top:20px;
+            font-size:0.7em;
+            text-align:center;
+        }
 
     </style>
 </head>
 <body>
 <div id="main">
     <div id="uthgard-players" class="pure-form">
-        <h1>Uthgard Players</h1>
+        <h1>DAOC Uthgard Player Info</h1>
         
         <div class="form">
-            <input type="text" v-model="namesInput" v-on:keyup.enter="fetchAllNames" placeholder="Mistar Bruno Ascerian Felrith" />
+            <input title="First name's of players separated by space or commas." type="text" v-model="namesInput" v-on:keyup.enter="fetchAllNames" placeholder="Mistar Bruno Ascerian Felrith" />
            <button class="pure-button" v-on:click="fetchAllNames">Lookup Players</button>
         </div>
         
@@ -93,6 +105,8 @@
         </div>
     </div>
 </div>
-
+<footer>
+    <p class="credit">Built by <a href="http://www.poism.com" target="_BLANK">Po</a> (Mistar Nooblar) | <a href="https://github.com/poism/uthgard-players-lookup" target="_BLANK">View project on Github</a></p>
+</footer>
 </body>
 </html>

@@ -8,7 +8,7 @@ window.onload = function () {
         el: '#uthgard-players',
         data: {
             debug: false,
-            fakeapi: true,
+            fakeapi: false,
             apiURL: 'api.php?names=',
             defaultNames: 'Mistar,Bruno,Ascerian,Felrith',
             namesInput: '',
@@ -23,7 +23,7 @@ window.onload = function () {
         computed: {
             statusMessage: function() {
                 if ( this.inProgress ) {
-                    status = "Fetching data, please wait..."
+                    status = "Fetching data (" + this.namesInputSanitized + "), please wait..."
                 }
                 else {
                     status = ""
@@ -81,7 +81,7 @@ window.onload = function () {
                 var xhr = new XMLHttpRequest()
                   self.inProgress = true
 
-                  console.log('Fetching: ' + self.namesInput)
+                  console.log('Fetching: ' + self.namesInputSanitized)
                   xhr.open('GET', encodeURI(self.apiURL + self.namesInput + (self.fakeapi ? '&fakeapi' : '')) )
                   xhr.onload = function () {
                     self.results = JSON.parse(xhr.responseText)
