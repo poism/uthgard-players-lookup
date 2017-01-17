@@ -21,10 +21,6 @@ window.onload = function () {
             users: []
         },
         computed: {
-            usersByExperience: function () {
-                var self = this
-                return _.orderBy(self.users, ['Raw.XP', 'RealmRank', 'RP_Percent'],['desc', 'desc', 'desc'])
-            },
             statusMessage: function() {
                 if ( this.inProgress ) {
                     status = "Fetching data, please wait..."
@@ -60,6 +56,10 @@ window.onload = function () {
             }
         },*/
         methods: {
+             sortByExperience: function () {
+                var self = this
+                return _.orderBy(self.users, ['Raw.XP', 'RealmRank', 'RP_Percent'],['desc', 'desc', 'desc'])
+            },
             toggleDebug: function () {
                 this.debug = !this.debug
             },
@@ -99,6 +99,7 @@ window.onload = function () {
                     console.log('Names not found: ' + self.namesNotFound.join(','))
                     self.inProgress = false
                     self.hasResults = true
+                    self.users = self.sortByExperience()
                   }
                 xhr.send()
               }
