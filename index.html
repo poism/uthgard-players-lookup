@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.2/pure-min.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.min.js"></script>
-    <script src="app.js?"></script>
+    <script src="app.js?20170117"></script>
     <style>
         #uthgard-players {
             max-width: 500px;
@@ -19,27 +19,29 @@
             padding-bottom:30px;
         }
         #uthgard-players .results {
-            padding-bottom:30px;
+        }
+        #uthgard-players .status {
+            font-style:italic;
         }
         td.xp-level {
-            text-align:center;
+            font-size:small;
         }
         .xp-level .xp-max {
-            border:1px green solid;
+            border:1px solid gray;
         }
         .xp-level .xp-max .xp-progress {
             position:relative;
-            background-color:greenyellow;
-            height:5px;
-            border-right: 1px solid green;
+            background-color:#cbcbcb;
+            height:4px;
+            border-bottom:1px solid gray;
+            border-right:1px solid gray;
         }
-        .realmrank.xp-level .xp-max {
-            border:1px red solid;
+        .xp-level .xp-max .xp-total-progress {
+            position:relative;
+            background-color:gray;
+            height:6px;
         }
-        .realmrank.xp-level .xp-max .xp-progress {
-            background-color:orange;
-            border-right: 1px solid red;
-        }
+
     </style>
 </head>
 <body>
@@ -57,27 +59,24 @@
             <thead>
                 <tr>
                     <th>Full Name</th>
-                    <th>Race</th>
-                    <th>Class</th>
-                    <th>Level</th>
-                    <th>Realm Rank</th>
+                    <th>Race / Class</th>
+                    <th>Level / Realm Rank</th>
                 </tr>
             </thead>
             <tbody>
             <tr v-for="user in users">
                 <td>{{user.FullName}}</td>
-                <td>{{user.RaceName}}</td>
-                <td>{{user.ClassName}}</td>
-                <td class="xp-level">{{user.Level}}<div class="xp-max">
-                    <div class="xp-progress" v-bind:style="{ width: Math.floor( user.XP_Percent * 100) + '%' }"></div></div>
-                </td>
-                <td class="realmrank xp-level">{{user.RealmRank}}<div class="xp-max">
-                    <div class="xp-progress" v-bind:style="{ width: Math.floor( user.RP_Percent * 100) + '%' }"></div></div>
+                <td>{{user.RaceName}} {{user.ClassName}}</td>
+                <td class="xp-level">
+                    {{Math.round( (user.Level + user.XP_Percent) * 100) / 100}} / R{{ Math.round(user.RealmRank + user.RP_Percent) * 100 / 100}}
+                    <div class="xp-max">
+                        <div class="xp-progress" v-bind:style="{ width: Math.floor( user.XP_Percent * 100) + '%' }"></div>
+                        <div class="xp-total-progress" v-bind:style="{ width: Math.floor( ((user.Level + user.XP_Percent)/50) * 100 ) + '%' }"></div>
+                    </div>
                 </td>
             </tr>
             </tbody>
         </table>
-        <p>Last updated: users.Raw.LastUpdated | formatTimestamp  </p>
         </div>
         
         <div class="status">

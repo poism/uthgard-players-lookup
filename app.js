@@ -8,7 +8,7 @@ window.onload = function () {
         el: '#uthgard-players',
         data: {
             debug: false,
-            fakeapi: false,
+            fakeapi: true,
             apiURL: 'api.php?names=',
             defaultNames: 'Mistar,Bruno,Ascerian,Felrith',
             namesInput: '',
