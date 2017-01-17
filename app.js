@@ -51,25 +51,26 @@ window.onload = function () {
                 ]*/
                 return (date.toUTCString())
             }
-        },
+        },/*//disabling sanitize while typing watch
         watch: {
             namesInput: function () {
                 if ( this.namesInput !== this.namesInputSanitized ){
                     this.sanitizeInputOnChange()
                 }
             }
-        },
+        },*/
         methods: {
             toggleDebug: function () {
                 this.debug = !this.debug
             },
             fetchAllNames: function () {
                 var self = this
-                
+                /*//disabling sanitize while typing watch
                 if ( self.namesInputSanitized == '' ) {
                     self.namesInput = self.defaultNames
-                }
+                }*/
                 self.namesInputArray = []
+                self.namesInputSanitized = ''
                 self.results = []
                 self.fetchData()
             },
@@ -105,27 +106,42 @@ window.onload = function () {
             },
             sanitizeInput: function() {
                     var self = this
-                    self.namesInputSanitized = self.namesInput.replace(/,{2,}/g, ",")
+                    if ( self.namesInput == '' ) {
+                        self.namesInput = self.defaultNames
+                    }
+                    self.namesInputSanitized = self.namesInput.replace(/\s/g, ",")
+                    self.namesInputSanitized = self.namesInputSanitized.replace(/,{2,}/g, ",")
                     self.namesInputArray = self.namesInputSanitized.split(',')
                     for (var i = 0, len = self.namesInputArray.length; i < len; i++) {
                         self.namesInputArray[i] = self.namesInputArray[i].trim()
-                        self.namesInputArray[i] = self.namesInputArray[i].replace(/[^a-zA-Z ]/g, "")
+                        self.namesInputArray[i] = self.namesInputArray[i].replace(/[^a-zA-Z]/g, "")
                         self.namesInputArray[i] = self.namesInputArray[i].charAt(0).toUpperCase() + self.namesInputArray[i].substr(1).toLowerCase()
                         console.log('sanitizeInput: ' + self.namesInputArray[i])
+                        // Check if input name already fetched
                         for (var r = 0, rlen = self.users.length; r < rlen; r++) {
                             if ( self.users[r].Raw.Name == self.namesInputArray[i] ) {
                                 console.log('Omitting "' + self.namesInputArray[i] + '" from query since it already exists.')
                                 self.namesInputArray.splice(i, 1)
                                 len = len - 1
+                                i = i - 1
+                            }
+                        }
+                        // Check if input name already not found
+                        for (var n = 0, nlen = self.namesNotFound.length; n < nlen; n++) {
+                            if ( self.namesNotFound[n] == self.namesInputArray[i] ) {
+                                console.log('Omitting "' + self.namesInputArray[i] + '" from query since it already failed to fetch.')
+                                self.namesInputArray.splice(i, 1)
+                                len = len - 1
+                                i = i - 1
                             }
                         }
                     }
                     self.namesInputSanitized = self.namesInputArray.join(',')
                     self.namesInput = self.namesInputSanitized
-            },
+            }/*//disabling sanitize while typing watch,
             sanitizeInputOnChange: _.debounce(function () {
                     this.sanitizeInput()
-                }, 500)
+                }, 500)*/
         }
     });
 }
