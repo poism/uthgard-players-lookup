@@ -9,8 +9,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.min.js"></script>
     <script src="app.js?20170118"></script>
     <style>
+        body {
+            padding: 0 10px 0 10px;
+        }
         #uthgard-players {
-            max-width: 460px;
+            min-width: 300px;
+            max-width: 900px;
             margin:0 auto;
         }
         #uthgard-players table {
@@ -19,25 +23,32 @@
         #uthgard-players .form {
             padding-bottom:30px;
         }
+        #uthgard-players .pure-table td, 
+        #uthgard-players .pure-table th {
+            font-size:0.85em;
+        }
         #uthgard-players .results {
         }
         #uthgard-players .status {
             font-style:italic;
         }
-        td.xp-level {
-            font-size:small;
+        td.full-name {
+            font-weight: bold;
         }
-        .xp-level .xp-max {
+        td.xp-level {
+            font-size:0.8em;
+        }
+        td.xp-level .xp-max {
             border:1px solid gray;
         }
-        .xp-level .xp-max .xp-progress {
+        td.xp-level .xp-max .xp-progress {
             position:relative;
             background-color:lightblue;
             height:4px;
             border-bottom:1px solid gray;
             border-right:1px solid gray;
         }
-        .xp-level .xp-max .xp-total-progress {
+        td.xp-level .xp-max .xp-total-progress {
             position:relative;
             background-color:gray;
             height:6px;
@@ -72,13 +83,15 @@
                 <tr>
                     <th>Full Name</th>
                     <th>Race / Class</th>
+                    <th>Guild</th>
                     <th>Level / Realm Rank</th>
                 </tr>
             </thead>
             <tbody>
             <tr v-for="user in users">
-                <td>{{user.FullName}}</td>
-                <td>{{user.RaceName}} {{user.ClassName}}</td>
+                <td class="full-name">{{user.FullName}}</td>
+                <td class="race-class">{{user.RaceName}} {{user.ClassName}}</td>
+                <td class="guild-name">{{user.Raw.GuildName}}</td>
                 <td class="xp-level">
                     {{Math.round( (user.Level + user.XP_Percent) * 100) / 100}} / {{ user.RealmRank | formatRealmRank }}{{ user.RP_Percent | formatRealmRankPercent }}
                     <div class="xp-max">
