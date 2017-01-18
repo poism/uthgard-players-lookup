@@ -46,6 +46,15 @@ window.onload = function () {
                    date.getSeconds(),
                 ]*/
                 return (date.toUTCString())
+            },
+            formatRealmRank: function (rr) {
+                rr = 'R' + rr.toString().replace(".", "L")
+                return rr
+            },
+            formatRealmRankPercent: function (rrpct) {
+                rrpct = rrpct.toFixed(2)
+                rrpct = rrpct.substring(rrpct.indexOf("."))
+                return rrpct
             }
         },/*//disabling sanitize while typing watch
         watch: {
