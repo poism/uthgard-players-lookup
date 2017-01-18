@@ -81,7 +81,7 @@
         .debug {
             font-size:0.6em;
         }
-        footer .credit {
+        .footer .credit {
             padding-top:20px;
             font-size:0.7em;
             text-align:center;
@@ -96,7 +96,7 @@
         <h1>DAOC Uthgard Player Info</h1>
         
         <div class="form">
-            <input title="First name's of players separated by space or commas." type="text" v-model="namesInput" v-on:keyup.enter="fetchAllNames" placeholder="Mistar Bruno Ascerian Felrith" />
+            <input title="First names of players separated by space or commas." type="text" v-model="namesInput" v-on:keyup.enter="fetchAllNames" placeholder="Mistar Bruno Ascerian Felrith" />
            <button class="pure-button" v-on:click="fetchAllNames">Lookup Players</button>
         </div>
         
@@ -141,8 +141,8 @@
         </div>
     </div>
 </div>
-<footer>
+<div class="footer">
     <p class="credit">Built by <a href="http://www.poism.com" target="_BLANK">Po</a> (Mistar Nooblar) | <a href="https://github.com/poism/uthgard-players-lookup" target="_BLANK">View project on Github</a></p>
-</footer>
+</div>
 </body>
 </html>
