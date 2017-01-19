@@ -123,10 +123,10 @@
                 <td class="race-class">{{user.RaceName}} {{user.ClassName}}</td>
                 <td class="guild-name">{{user.Raw.GuildName}}</td>
                 <td class="xp-level">
-                    {{Math.round( (user.Level + user.XP_Percent) * 100) / 100}} / {{ user.RealmRank | formatRealmRank }}{{ user.RP_Percent | formatRealmRankPercent }}
+                    {{Math.round( (user.Level + user.XP_Percent) * 10) / 10}} / {{ user.RealmRank | formatRealmRank }}{{ user.RP_Percent | formatRealmRankPercent }}
                     <div class="xp-max">
-                        <div class="xp-progress" v-bind:style="{ width: Math.floor( user.XP_Percent * 100) + '%' }"></div>
-                        <div class="xp-total-progress" v-bind:style="{ width: Math.floor( ((user.Level + user.XP_Percent)/50) * 100 ) + '%' }"></div>
+                        <div class="xp-progress" v-bind:style="{ width: Math.round( (user.XP_Percent + 0.019 ) * 100) + '%' }"></div>
+                        <div class="xp-total-progress" v-bind:style="{ width: Math.round( ((user.Level + user.XP_Percent)/50) * 100 ) + '%' }"></div>
                     </div>
                 </td>
             </tr>

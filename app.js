@@ -48,8 +48,13 @@ window.onload = function () {
                 return (date.toUTCString())
             },
             formatRealmRank: function (rr) {
-                rr = 'R' + rr.toString().replace(".", "L")
-                return rr
+                var rrStr = ""
+                rr = rr.toString().split(".")
+                if ( !rr[1] ) {
+                    rr[1] = "0"
+                } 
+                rrStr = 'R' + rr[0] + 'L' + rr[1]
+                return rrStr
             },
             formatRealmRankPercent: function (rrpct) {
                 rrpct = rrpct.toFixed(2)
