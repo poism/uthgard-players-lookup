@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.2/pure-min.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.min.js"></script>
-    <script src="app.js?20170118"></script>
+    <script src="app.js?20170119"></script>
     <style>
         body {
             padding: 0 10px 0 10px;
@@ -103,8 +103,8 @@
         <h1>DAOC Uthgard Player Info</h1>
         
         <div class="form">
-            <input title="First names of players separated by space or commas." type="text" v-model="namesInput" v-on:keyup.enter="fetchAllNames" placeholder="Mistar Bruno Ascerian Felrith" />
-           <button class="pure-button" v-on:click="fetchAllNames">Lookup Players</button>
+            <input title="First names of players separated by space or commas." type="text" v-model="namesInput" v-on:keyup.enter="fetchData" placeholder="Mistar Bruno Ascerian Felrith" />
+           <button class="pure-button" v-on:click="fetchData">Lookup Players</button>
         </div>
         
         <div class="results" v-if="hasResults">

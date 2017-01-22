@@ -8,7 +8,7 @@ window.onload = function () {
         el: '#uthgard-players',
         data: {
             debug: false,
-            fakeapi: false,
+            fakeapi: true,
             apiURL: 'api.php?names=',
             defaultNames: 'Mistar,Bruno,Ascerian,Felrith',
             namesInput: '',
@@ -17,7 +17,6 @@ window.onload = function () {
             namesNotFound: [],
             inProgress: false,
             hasResults: false,
-            results: [],
             users: []
         },
         computed: {
@@ -77,47 +76,46 @@ window.onload = function () {
             toggleDebug: function () {
                 this.debug = !this.debug
             },
-            fetchAllNames: function () {
+            fetchData: function () {
                 var self = this
-                /*//disabling sanitize while typing watch
-                if ( self.namesInputSanitized == '' ) {
-                    self.namesInput = self.defaultNames
-                }*/
-                self.namesInputArray = []
-                self.namesInputSanitized = ''
-                self.results = []
-                self.fetchData()
-            },
-            fetchData: function (name) {
-              var self = this
-              self.sanitizeInput()
-              if ( self.namesInputArray.length > 0 ) {
-                var xhr = new XMLHttpRequest()
-                  self.inProgress = true
+                self.sanitizeInput()
+                var queryLength = self.namesInputArray.length
+                
+                if ( queryLength > 0 ) {
+                    var xhr = new XMLHttpRequest()
+                    self.inProgress = true
+                    
+                    console.log('Fetching: ' + self.namesInputSanitized )
+                    xhr.open('GET', encodeURI(self.apiURL + self.namesInputSanitized + (self.fakeapi ? '&fakeapi' : '')) )
+                    xhr.onload = function () {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200) {
+                                var results = JSON.parse(xhr.responseText)
+                                for (var i = 0, len = results.length; i < len; i++) {
+                                    if ( results[i] === null || results[i] === undefined ){
+                                        self.namesNotFound.push( self.namesInputArray[i] )
+                                        console.log('User [ ' + self.namesInputArray[i] + ' ] NOT found!')
+                                    }
+                                    else {
+                                        self.users.push( results[i] )
+                                        console.log('User [ ' + self.namesInputArray[i] + ' ] data found!')
+                                    }
+                                }
+                                self.users = self.sortByExperience()
+                                self.inProgress = false
+                                self.hasResults = true
+                                self.namesInputArray = []
+                                self.namesInputSanitized = ''
+                                self.namesInput = ''
+                            } else {
+                                console.error(xhr.statusText);
+                            }
+                        }
 
-                  console.log('Fetching: ' + self.namesInputSanitized)
-                  xhr.open('GET', encodeURI(self.apiURL + self.namesInput + (self.fakeapi ? '&fakeapi' : '')) )
-                  xhr.onload = function () {
-                    self.results = JSON.parse(xhr.responseText)
-                    for (var i = 0, len = self.results.length; i < len; i++) {
-                        if ( self.results[i] === null ) {
-                            self.namesNotFound.push( self.namesInputArray[i] )
-                            console.log('Fetching: '+ self.namesInputArray[i] + ' not found')
-                        }
-                        else {
-                            self.users.push( self.results[i] )
-                            console.log('Fetching: ' + self.namesInputArray[i] + ' found')
-                        }
                     }
-                    console.log(self.users)
-                    console.log('Names not found: ' + self.namesNotFound.join(','))
-                    self.inProgress = false
-                    self.hasResults = true
-                    self.users = self.sortByExperience()
-                  }
-                xhr.send()
-              }
-                self.namesInput = ''
+                    xhr.send()
+                }
+              
             },
             sanitizeInput: function() {
                     var self = this
@@ -153,10 +151,7 @@ window.onload = function () {
                     }
                     self.namesInputSanitized = self.namesInputArray.join(',')
                     self.namesInput = self.namesInputSanitized
-            }/*//disabling sanitize while typing watch,
-            sanitizeInputOnChange: _.debounce(function () {
-                    this.sanitizeInput()
-                }, 500)*/
+            }
         }
     });
 }
