@@ -8,7 +8,7 @@ window.onload = function () {
         el: '#uthgard-players',
         data: {
             debug: false,
-            fakeapi: true,
+            fakeapi: false,
             apiURL: 'api.php?names=',
             defaultNames: 'Mistar,Bruno,Ascerian,Felrith',
             namesInput: '',
@@ -31,7 +31,14 @@ window.onload = function () {
                     status += "Not found: " + ( this.namesNotFound.join(', ') )
                 }
                 return status
-            }
+            }/*,
+            xpProgress: function() {
+                return Math.ceil(this.XP_Percent) * 100
+            },
+            xpTotalProgress: function() {
+                var level = Vue.filter('formatLevel')(this.Level + this.XP_Percent)
+                return ( level/50 )*100 
+            }*/
         },
         filters: {
             formatTimestamp: function (timestamp) {
@@ -45,20 +52,6 @@ window.onload = function () {
                    date.getSeconds(),
                 ]*/
                 return (date.toUTCString())
-            },
-            formatRealmRank: function (rr) {
-                var rrStr = ""
-                rr = rr.toString().split(".")
-                if ( !rr[1] ) {
-                    rr[1] = "0"
-                } 
-                rrStr = 'R' + rr[0] + 'L' + rr[1]
-                return rrStr
-            },
-            formatRealmRankPercent: function (rrpct) {
-                rrpct = rrpct.toFixed(2)
-                rrpct = rrpct.substring(rrpct.indexOf("."))
-                return rrpct
             }
         },/*//disabling sanitize while typing watch
         watch: {
@@ -69,12 +62,52 @@ window.onload = function () {
             }
         },*/
         methods: {
-             sortByExperience: function () {
+            sortByExperience: function() {
                 var self = this
                 return _.orderBy(self.users, ['Raw.XP', 'RealmRank', 'RP_Percent'],['desc', 'desc', 'desc'])
             },
-            toggleDebug: function () {
+            toggleDebug: function() {
                 this.debug = !this.debug
+            },
+            displayLevel: function (level, pct) {
+                var level = level + pct
+                if ( level < 50 ){
+                     level = Math.ceil(level * 10) / 10
+                }
+                else {
+                    level = 50                    
+                }
+                return level
+            },
+            displayRealmRank: function(rr, rrpct) {
+                var rrStr = ""
+                rr = Math.round( rr * 10) / 10
+                rr = rr.toString().split(".")
+                if ( !rr[1] ) {
+                    rr[1] = "0"
+                } 
+                rrStr = 'R' + rr[0] + 'L' + rr[1]
+                
+                rrpct = Math.round(rrpct * 10) / 10
+                rrpct = rrpct > 0 ? rrpct.toString().substring(1) : ""
+                
+                return rrStr + rrpct
+                
+            },
+            displayProgress: function(level, pct){
+                level = this.displayLevel(level,pct)
+                
+                if ( level === "50" ) {
+                    level = "100"
+                }
+                else {
+                    level = level.toString().split(".")
+                    level = level[1] * 10
+                }
+                return level
+            },
+            displayTotalProgress: function(level, pct) {
+                return ((this.displayLevel(level,pct) / 50) * 100)
             },
             fetchData: function () {
                 var self = this

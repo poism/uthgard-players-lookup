@@ -103,7 +103,7 @@
         <h1>DAOC Uthgard Player Info</h1>
         
         <div class="form">
-            <input title="First names of players separated by space or commas." type="text" v-model="namesInput" v-on:keyup.enter="fetchData" placeholder="Mistar Bruno Ascerian Felrith" />
+            <input title="First names of players separated by space or commas." type="text" v-model="namesInput" v-on:keyup.enter="fetchData" v-bind:placeholder="defaultNames" />
            <button class="pure-button" v-on:click="fetchData">Lookup Players</button>
         </div>
         
@@ -123,10 +123,10 @@
                 <td class="race-class">{{user.RaceName}} {{user.ClassName}}</td>
                 <td class="guild-name">{{user.Raw.GuildName}}</td>
                 <td class="xp-level">
-                    {{Math.round( (user.Level + user.XP_Percent) * 10) / 10}} / {{ user.RealmRank | formatRealmRank }}{{ user.RP_Percent | formatRealmRankPercent }}
+                    {{ displayLevel( user.Level, user.XP_Percent ) }} / {{ displayRealmRank( user.RealmRank, user.RP_Percent ) }}
                     <div class="xp-max">
-                        <div class="xp-progress" v-bind:style="{ width: Math.round( (user.XP_Percent + 0.019 ) * 100) + '%' }"></div>
-                        <div class="xp-total-progress" v-bind:style="{ width: Math.round( ((user.Level + user.XP_Percent)/50) * 100 ) + '%' }"></div>
+                        <div class="xp-progress" v-bind:style="{ width: displayProgress(user.Level, user.XP_Percent) + '%' }"></div>
+                        <div class="xp-total-progress" v-bind:style="{ width: displayTotalProgress(user.Level, user.XP_Percent) + '%' }"></div>
                     </div>
                 </td>
             </tr>
