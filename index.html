@@ -103,11 +103,11 @@
         <h1>DAOC Uthgard Player Info</h1>
         
         <div class="form">
-            <input title="First names of players separated by space or commas." type="text" v-model="namesInput" v-on:keyup.enter="fetchData" v-bind:placeholder="defaultNames" />
+            <input title="First names of players separated by space or commas." type="text" v-model="names.input" v-on:keyup.enter="fetchData" v-bind:placeholder="names.default" />
            <button class="pure-button" v-on:click="fetchData">Lookup Players</button>
         </div>
         
-        <div class="results" v-if="hasResults">
+        <div class="results" v-if="status.hasResults">
         <table class="pure-table pure-table-horizontal">
             <thead>
                 <tr>
@@ -135,12 +135,12 @@
         </div>
         
         <div class="status">
-            <p v-if="fakeapi">Fake API Mode: Data is not being fetched from actual Uthgard API.</p>
+            <p v-if="status.fakeApi">Fake API Mode: Data is not being fetched from actual Uthgard API.</p>
             <p>{{statusMessage}}</p>
         </div>
         
         <button class="pure-button" v-on:click="toggleDebug">Debug Info</button>
-        <div class="debug" v-if="debug">
+        <div class="debug" v-if="settings.debug">
                 <h3>
                   Debug Data
                 </h3>
