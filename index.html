@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.2/pure-min.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.min.js"></script>
-    <script src="app.js?20170119"></script>
+    <script src="app.js?20170122"></script>
     <style>
         body {
             padding: 0 10px 0 10px;
@@ -105,6 +105,7 @@
         <div class="form">
             <input title="First names of players separated by space or commas." type="text" v-model="names.input" v-on:keyup.enter="fetchData" v-bind:placeholder="names.default" />
            <button class="pure-button" v-on:click="fetchData">Lookup Players</button>
+           <button class="pure-button" v-on:click="clearData">Clear</button>
         </div>
         
         <div class="results" v-if="status.hasResults">
@@ -136,6 +137,8 @@
         
         <div class="status">
             <p v-if="status.fakeApi">Fake API Mode: Data is not being fetched from actual Uthgard API.</p>
+            <p v-if="status.localStorageEnabled"><span title="This data will be retained even after you close your browser or refresh this webpage.">LocalStorage enabled. {{ savedNames }}</span></p>
+            <p v-else>Your browser does not support HTML5 LocalStorage, name queries will not be saved. :(</p>
             <p>{{statusMessage}}</p>
         </div>
         

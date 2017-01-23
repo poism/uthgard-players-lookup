@@ -13,11 +13,12 @@ window.onload = function () {
                 apiURL: 'api.php?names='
             },
             names: {
-                default: 'Mistar,Bruno,Ascerian,Felrith',
+                default: '',
                 input: '',
                 sanitized: '',
                 nameArray: [],
-                notFound: []
+                notFound: [],
+                saved: []
             },
             status: {
                 inProgress: false,
@@ -38,14 +39,18 @@ window.onload = function () {
                     status += "Not found: " + ( this.names.notFound.join(', ') )
                 }
                 return status
-            }/*,
-            xpProgress: function() {
-                return Math.ceil(this.XP_Percent) * 100
             },
-            xpTotalProgress: function() {
-                var level = Vue.filter('formatLevel')(this.Level + this.XP_Percent)
-                return ( level/50 )*100 
-            }*/
+            savedNames: function() {
+                var self = this
+                var str = ""
+                if (self.names.saved.length > 0) {
+                    str = "Saved names: " + self.names.saved.join(',')
+                }
+                else {
+                    str = "No saved names."
+                } 
+                return str
+            }
         },
         filters: {
             formatTimestamp: function (timestamp) {
@@ -60,15 +65,42 @@ window.onload = function () {
                 ]*/
                 return (date.toUTCString())
             }
-        },/*//disabling sanitize while typing watch
-        watch: {
-            namesInput: function () {
-                if ( this.names.input !== this.names.sanitized ){
-                    this.sanitizeInputOnChange()
-                }
-            }
-        },*/
+        },
         methods: {
+            init: function() {
+                var self = this
+                if ('localStorage' in window && window['localStorage'] !== null) {
+				    self.status.localStorageEnabled = true
+                    self.localStorageGet()
+                }
+            },
+            localStorageGet() {
+                var self = this
+                if ( self.status.localStorageEnabled ){
+                    var storage = window['localStorage']
+                    if (storage.getItem('savedNames')){
+                        var res = storage.getItem('savedNames')
+                        if (self.status.hasResults == false) {
+                            self.names.default = res
+                        }
+                        self.names.saved = res.split(',')
+                    }
+                }
+            },
+            localStorageUpdate() {
+                var self = this
+                if ( self.status.localStorageEnabled ){
+                    var storage = window['localStorage']
+                    storage.setItem( "savedNames", self.names.saved.join(',') )
+                }
+            },
+            localStorageClear() {
+                var self = this
+                if ( self.status.localStorageEnabled ){
+                    var storage = window['localStorage']
+                    storage.setItem( "savedNames", "")
+                }
+            },
             sortByExperience: function() {
                 var self = this
                 return _.orderBy(self.users, ['Raw.XP', 'RealmRank', 'RP_Percent'],['desc', 'desc', 'desc'])
@@ -82,7 +114,7 @@ window.onload = function () {
                      level = Math.ceil(level * 10) / 10
                 }
                 else {
-                    level = 50                    
+                    level = 50
                 }
                 return level
             },
@@ -116,12 +148,19 @@ window.onload = function () {
             displayTotalProgress: function(level, pct) {
                 return ((this.displayLevel(level,pct) / 50) * 100)
             },
+            clearData: function() {
+                var self = this
+                self.users = []
+                self.names.saved = []
+                self.names.input = ""
+                self.names.default = ""
+                self.localStorageClear()
+            },
             fetchData: function () {
                 var self = this
                 self.sanitizeInput()
-                var queryLength = self.names.nameArray.length
                 
-                if ( queryLength > 0 ) {
+                if ( self.names.nameArray.length > 0 ) {
                     var xhr = new XMLHttpRequest()
                     self.status.inProgress = true
                     
@@ -137,11 +176,15 @@ window.onload = function () {
                                         console.log('User [ ' + self.names.nameArray[i] + ' ] NOT found!')
                                     }
                                     else {
+                                        if ( self.names.saved.indexOf( self.names.nameArray[i] ) < 0 ) {
+                                            self.names.saved.push( self.names.nameArray[i] )
+                                        }
                                         self.users.push( results[i] )
                                         console.log('User [ ' + self.names.nameArray[i] + ' ] data found!')
                                     }
                                 }
                                 self.users = self.sortByExperience()
+                                self.localStorageUpdate()
                                 self.status.inProgress = false
                                 self.status.hasResults = true
                                 self.names.nameArray = []
@@ -160,38 +203,46 @@ window.onload = function () {
             sanitizeInput: function() {
                     var self = this
                     if ( self.names.input == '' ) {
-                        self.names.input = self.defaultNames
+                        self.names.input = self.names.default
                     }
                     self.names.sanitized = self.names.input.replace(/\s/g, ",")
                     self.names.sanitized = self.names.sanitized.replace(/,{2,}/g, ",")
-                    self.names.nameArray = self.names.sanitized.split(',')
-                    for (var i = 0, len = self.names.nameArray.length; i < len; i++) {
-                        self.names.nameArray[i] = self.names.nameArray[i].trim()
-                        self.names.nameArray[i] = self.names.nameArray[i].replace(/[^a-zA-Z]/g, "")
-                        self.names.nameArray[i] = self.names.nameArray[i].charAt(0).toUpperCase() + self.names.nameArray[i].substr(1).toLowerCase()
-                        console.log('sanitizeInput: ' + self.names.nameArray[i])
-                        // Check if input name already fetched
-                        for (var r = 0, rlen = self.users.length; r < rlen; r++) {
-                            if ( self.users[r].Raw.Name == self.names.nameArray[i] ) {
-                                console.log('Omitting "' + self.names.nameArray[i] + '" from query since it already exists.')
-                                self.names.nameArray.splice(i, 1)
-                                len = len - 1
-                                i = i - 1
+                    if (self.names.sanitized == "" || self.names.sanitized == ",") {
+                        self.names.nameArray = []
+                    }
+                    else {
+                        self.names.nameArray = self.names.sanitized.split(',')
+                        for (var i = 0, len = self.names.nameArray.length; i < len; i++) {
+                            self.names.nameArray[i] = self.names.nameArray[i].trim()
+                            self.names.nameArray[i] = self.names.nameArray[i].replace(/[^a-zA-Z]/g, "")
+                            self.names.nameArray[i] = self.names.nameArray[i].charAt(0).toUpperCase() + self.names.nameArray[i].substr(1).toLowerCase()
+                            console.log('sanitizeInput: ' + self.names.nameArray[i])
+                            // Check if input name already fetched
+                            for (var r = 0, rlen = self.users.length; r < rlen; r++) {
+                                if ( self.users[r].Raw.Name == self.names.nameArray[i] ) {
+                                    console.log('Omitting "' + self.names.nameArray[i] + '" from query since it already exists.')
+                                    self.names.nameArray.splice(i, 1)
+                                    len = len - 1
+                                    i = i - 1
+                                }
                             }
-                        }
-                        // Check if input name already not found
-                        for (var n = 0, nlen = self.names.notFound.length; n < nlen; n++) {
-                            if ( self.names.notFound[n] == self.names.nameArray[i] ) {
-                                console.log('Omitting "' + self.names.nameArray[i] + '" from query since it already failed to fetch.')
-                                self.names.nameArray.splice(i, 1)
-                                len = len - 1
-                                i = i - 1
+                            // Check if input name already not found
+                            for (var n = 0, nlen = self.names.notFound.length; n < nlen; n++) {
+                                if ( self.names.notFound[n] == self.names.nameArray[i] ) {
+                                    console.log('Omitting "' + self.names.nameArray[i] + '" from query since it already failed to fetch.')
+                                    self.names.nameArray.splice(i, 1)
+                                    len = len - 1
+                                    i = i - 1
+                                }
                             }
                         }
                     }
+
                     self.names.sanitized = self.names.nameArray.join(',')
                     self.names.input = self.names.sanitized
             }
         }
     });
+    
+    uthgardPlayers.init();
 }
