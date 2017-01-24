@@ -21,7 +21,8 @@
         a,h2,h3,h4 {
             color:#ffba00;
         }
-        a:hover {
+        a:hover,
+        td.remove-user button:hover {
             text-shadow:#000 0 0 1px, #ffba00 0 0 2px;
         }
         #uthgard-players {
@@ -80,6 +81,15 @@
             background-color:#ffba00;
             height:6px;
         }
+        td.remove-user {
+            padding-right:0;
+        }
+        td.remove-user button {
+            background-color:transparent;
+            font-weight:bold;
+            color:red;
+            padding-right:0;
+        }
         .status {
             font-style:italic;
             font-size:0.8em;
@@ -104,14 +114,16 @@
         
         <div class="form">
             <input title="First names of players separated by space or commas." type="text" v-model="names.input" v-on:keyup.enter="fetchData" v-bind:placeholder="names.default" />
-           <button class="pure-button" v-on:click="fetchData">Lookup Players</button>
-           <button class="pure-button" v-on:click="clearData">Clear</button>
+            <button class="pure-button" v-on:click="fetchData">Lookup Players</button>
+            <button class="pure-button" v-on:click="clearData">Clear All</button>
+            <button class="pure-button" v-on:click="refreshData">Refresh</button>
         </div>
         
         <div class="results" v-if="status.hasResults">
         <table class="pure-table pure-table-horizontal">
             <thead>
                 <tr>
+                    <th></th>
                     <th>Full Name</th>
                     <th>Race / Class</th>
                     <th>Guild</th>
@@ -120,6 +132,7 @@
             </thead>
             <tbody>
             <tr v-for="user in users">
+                <td class="remove-user"><button class="pure-button" v-on:click="removeUser(user.FullName)">X</button></td>
                 <td class="full-name">{{user.FullName}}</td>
                 <td class="race-class">{{user.RaceName}} {{user.ClassName}}</td>
                 <td class="guild-name">{{user.Raw.GuildName}}</td>
@@ -136,7 +149,7 @@
         </div>
         
         <div class="status">
-            <p v-if="status.fakeApi">Fake API Mode: Data is not being fetched from actual Uthgard API.</p>
+            <p v-if="settings.fakeApi">Fake API Mode: Data is not being fetched from actual Uthgard API.</p>
             <p v-if="status.localStorageEnabled"><span title="This data will be retained even after you close your browser or refresh this webpage.">LocalStorage enabled. {{ savedNames }}</span></p>
             <p v-else>Your browser does not support HTML5 LocalStorage, name queries will not be saved. :(</p>
             <p>{{statusMessage}}</p>

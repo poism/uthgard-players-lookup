@@ -9,7 +9,7 @@ window.onload = function () {
         data: {
             settings: {
                 debug: false,
-                fakeapi: false,
+                fakeApi: false,
                 apiURL: 'api.php?names='
             },
             names: {
@@ -92,6 +92,7 @@ window.onload = function () {
                 if ( self.status.localStorageEnabled ){
                     var storage = window['localStorage']
                     storage.setItem( "savedNames", self.names.saved.join(',') )
+                    self.names.default = self.names.saved.join(',')
                 }
             },
             localStorageClear() {
@@ -100,6 +101,33 @@ window.onload = function () {
                     var storage = window['localStorage']
                     storage.setItem( "savedNames", "")
                 }
+            },
+            removeUser(userName) {
+                var self = this
+                console.log('removeData:'+userName)
+                for (var i = 0, len = self.users.length; i < len; i++) {
+                    if (self.users[i].FullName == userName){
+                        console.log('Deleting "' + userName + '".')
+                        self.users.splice(i, 1)
+                        len = len - 1
+                        i = i - 1
+                        continue
+                    }
+                }
+                for (i = 0, len = self.names.saved.length; i < len; i++) {
+                    if (self.names.saved[i] == userName){
+                        console.log('Deleting saved "' + userName + '".')
+                        self.names.saved.splice(i, 1)
+                        len = len - 1
+                        i = i - 1
+                        continue
+                    }
+                }
+                self.localStorageUpdate()
+            },
+            refreshData(){
+                this.users = []
+                this.fetchData()
             },
             sortByExperience: function() {
                 var self = this
@@ -165,7 +193,7 @@ window.onload = function () {
                     self.status.inProgress = true
                     
                     console.log('Fetching: ' + self.names.sanitized )
-                    xhr.open('GET', encodeURI(self.settings.apiURL + self.names.sanitized + (self.settings.fakeapi ? '&fakeapi' : '')) )
+                    xhr.open('GET', encodeURI(self.settings.apiURL + self.names.sanitized + (self.settings.fakeApi ? '&fakeapi' : '')) )
                     xhr.onload = function () {
                         if (xhr.readyState === 4) {
                             if (xhr.status === 200) {
