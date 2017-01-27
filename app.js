@@ -28,7 +28,7 @@ window.onload = function () {
             users: []
         },
         computed: {
-            statusMessage: function() {
+            statusMessage: function () {
                 if ( this.status.inProgress ) {
                     status = "Fetching data (" + this.names.sanitized + "), please wait..."
                 }
@@ -40,7 +40,7 @@ window.onload = function () {
                 }
                 return status
             },
-            savedNames: function() {
+            savedNames: function () {
                 var self = this
                 var str = ""
                 if (self.names.saved.length > 0) {
@@ -67,14 +67,14 @@ window.onload = function () {
             }
         },
         methods: {
-            init: function() {
+            init: function () {
                 var self = this
                 if ('localStorage' in window && window['localStorage'] !== null) {
 				    self.status.localStorageEnabled = true
                     self.localStorageGet()
                 }
             },
-            localStorageGet() {
+            localStorageGet: function () {
                 var self = this
                 if ( self.status.localStorageEnabled ){
                     var storage = window['localStorage']
@@ -87,7 +87,7 @@ window.onload = function () {
                     }
                 }
             },
-            localStorageUpdate() {
+            localStorageUpdate: function () {
                 var self = this
                 if ( self.status.localStorageEnabled ){
                     var storage = window['localStorage']
@@ -95,14 +95,14 @@ window.onload = function () {
                     self.names.default = self.names.saved.join(',')
                 }
             },
-            localStorageClear() {
+            localStorageClear: function () {
                 var self = this
                 if ( self.status.localStorageEnabled ){
                     var storage = window['localStorage']
                     storage.setItem( "savedNames", "")
                 }
             },
-            removeUser(userName) {
+            removeUser: function (userName) {
                 var self = this
                 console.log('removeData:'+userName)
                 for (var i = 0, len = self.users.length; i < len; i++) {
@@ -125,15 +125,15 @@ window.onload = function () {
                 }
                 self.localStorageUpdate()
             },
-            refreshData(){
+            refreshData: function (){
                 this.users = []
                 this.fetchData()
             },
-            sortByExperience: function() {
+            sortByExperience: function () {
                 var self = this
                 return _.orderBy(self.users, ['Raw.XP', 'RealmRank', 'RP_Percent'],['desc', 'desc', 'desc'])
             },
-            toggleDebug: function() {
+            toggleDebug: function () {
                 this.settings.debug = !this.settings.debug
             },
             displayLevel: function (level, pct) {
@@ -146,7 +146,7 @@ window.onload = function () {
                 }
                 return level
             },
-            displayRealmRank: function(rr, rrpct) {
+            displayRealmRank: function (rr, rrpct) {
                 var rrStr = ""
                 rr = Math.round( rr * 10) / 10
                 rr = rr.toString().split(".")
@@ -161,7 +161,7 @@ window.onload = function () {
                 return rrStr + rrpct
                 
             },
-            displayProgress: function(level, pct){
+            displayProgress: function (level, pct){
                 level = this.displayLevel(level,pct)
                 
                 if ( level === "50" ) {
@@ -173,10 +173,10 @@ window.onload = function () {
                 }
                 return level
             },
-            displayTotalProgress: function(level, pct) {
+            displayTotalProgress: function (level, pct) {
                 return ((this.displayLevel(level,pct) / 50) * 100)
             },
-            clearData: function() {
+            clearData: function () {
                 var self = this
                 self.users = []
                 self.names.saved = []
@@ -228,7 +228,7 @@ window.onload = function () {
                 }
               
             },
-            sanitizeInput: function() {
+            sanitizeInput: function () {
                     var self = this
                     if ( self.names.input == '' ) {
                         self.names.input = self.names.default
